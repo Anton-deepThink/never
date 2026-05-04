@@ -1,15 +1,33 @@
-name: Run Backend
+name: Fake Backend for OTP
 
 on:
   workflow_dispatch:
+  issues:
+    types: [opened]
 
 jobs:
-  backend:
+  send-otp:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      
+      - name: Получить email из issue
+        id: get_email
+        run: |
+          ISSUE_BODY=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}" | jq -r '.body')
+          echo "email=$ISSUE_BODY" >> $GITHUB_OUTPUT
+      
+      - name: Отправить код через Яндекс SMTP
+        uses: dawidd6/action-send-mail@v3
         with:
-          python-version: '3.10'
-      - run: pip install -r requirements.txt
-      - run: python server.py
+          server_address: smtp.yandex.ru
+          server_port: 465
+          username: anurin.dmit@ya.ru
+          password: kiqgyqctsdihmpvo
+          subject: Код для входа в Message to Future
+          to: ${{ steps.get_email.outputs.email }}
+          from: Message to Future
+          body: |
+            Ваш код для входа: ${{ github.run_id }}
+            Код действителен 5 минут.
