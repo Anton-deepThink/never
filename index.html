@@ -875,4 +875,8 @@
     applyTimeTheme();
     setInterval(applyTimeTheme, 60000);
     
-    const savedMood
+    const savedMood = localStorage.getItem('mood');
+    if (savedMood) applyMood(savedMood);
+</script>
+</body>
+</html>
