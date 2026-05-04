@@ -2,8 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Message to Future | Письмо в конверте</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message to Future | Конверт в будущее</title>
     <style>
         * {
             margin: 0;
@@ -11,121 +11,128 @@
             box-sizing: border-box;
         }
 
-        /* ----- Обычный, элегантный дизайн (светлая тема) ----- */
         body {
-            font-family: 'Segoe UI', 'Roboto', 'Georgia', serif;
-            background: #f3efe7;
-            color: #2c2b28;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
+            background: #faf9f7;
+            color: #1e1e2a;
             line-height: 1.5;
-            padding: 2rem 1rem;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 1280px;
+            max-width: 1100px;
             margin: 0 auto;
+            padding: 2rem 1.5rem;
         }
 
-        /* карточки и элементы */
-        .card {
-            background: #ffffffea;
-            backdrop-filter: blur(0px);
-            border-radius: 28px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.02);
-            padding: 1.8rem;
-            transition: box-shadow 0.2s;
-            border: 1px solid #e6e0d5;
-        }
-
-        .card:hover {
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
-        }
-
-        button, .btn {
-            background: #2b5e3b;
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 60px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            width: 100%;
-            font-family: inherit;
-        }
-
-        button:hover {
-            background: #1f4529;
-            transform: translateY(-2px);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1.5px solid #2b5e3b;
-            color: #2b5e3b;
-        }
-        .btn-outline:hover {
-            background: #2b5e3b20;
-            transform: translateY(-2px);
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            margin: 0.6rem 0 1rem 0;
-            background: white;
-            border: 1px solid #ddd6cc;
-            border-radius: 20px;
-            font-family: inherit;
-            font-size: 1rem;
-            transition: 0.2s;
-        }
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: #2b5e3b;
-            box-shadow: 0 0 0 2px #2b5e3b30;
-        }
-
-        /* заголовки */
-        h1, h2 {
-            font-weight: 500;
-            letter-spacing: -0.01em;
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
         }
         .logo {
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: #2b5e3b;
-            text-align: center;
-            margin-bottom: 0.25rem;
+            font-size: 2.2rem;
+            font-weight: 500;
+            letter-spacing: -0.3px;
+            color: #3b3b4a;
+            margin-bottom: 0.5rem;
+        }
+        .logo span {
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .sub {
+            color: #8b8a9b;
+            font-size: 0.95rem;
         }
 
-        /* вкладки */
+        .card {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03);
+            border: 1px solid #efedea;
+            padding: 1.8rem;
+            transition: box-shadow 0.2s;
+        }
+        .card:hover {
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.05);
+        }
+
+        button {
+            background: #2c3e5c;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            font-family: inherit;
+        }
+        button:hover {
+            background: #1e2f48;
+            transform: translateY(-1px);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #cbcbcb;
+            color: #4a4a5a;
+        }
+        .btn-outline:hover {
+            background: #f5f4f0;
+            transform: translateY(-1px);
+            border-color: #a0a0b0;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            margin: 0.5rem 0 1rem 0;
+            background: #ffffff;
+            border: 1px solid #e2dfdb;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #8b8a9b;
+            box-shadow: 0 0 0 2px rgba(59, 59, 74, 0.08);
+        }
+        label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #5a5a6e;
+            margin-left: 4px;
+        }
+
         .tabs {
             display: flex;
-            gap: 0.5rem;
-            border-bottom: 1px solid #e0d9cf;
-            margin-bottom: 1.8rem;
-            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #edebe7;
+            padding-bottom: 0.75rem;
         }
         .tab {
             background: none;
             border: none;
-            padding: 0.6rem 1.2rem;
-            font-size: 1rem;
+            padding: 0.4rem 0.75rem;
+            font-size: 0.95rem;
             font-weight: 500;
-            color: #5f5b55;
+            color: #9a9aac;
             width: auto;
             border-radius: 40px;
         }
         .tab.active {
-            background: #2b5e3b20;
-            color: #1f4529;
+            color: #2c3e5c;
+            background: #f0efe9;
         }
 
-        /* секции */
         .section {
             display: none;
-            animation: fade 0.3s ease;
+            animation: fade 0.25s ease;
         }
         .section.active { display: block; }
         @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
@@ -133,217 +140,223 @@
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+            gap: 1.8rem;
         }
 
-        /* АНИМАЦИЯ КОНВЕРТА */
-        .envelope-animation-area {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 1000;
-            pointer-events: none;
-        }
-        .envelope {
-            background: #fdf8ed;
-            width: 220px;
-            height: 140px;
-            border-radius: 12px 12px 8px 8px;
-            box-shadow: 0 15px 25px rgba(0,0,0,0.2);
-            position: relative;
-            border: 1px solid #d3c7b2;
-            transform-origin: bottom right;
-            transition: transform 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.2), opacity 0.4s;
-            opacity: 0;
-            transform: scale(0.6) translate(50px, 50px);
-        }
-        .envelope.show {
-            opacity: 1;
-            transform: scale(1) translate(0, 0);
-        }
-        .envelope.fly-away {
-            transform: translateX(180px) translateY(-100px) scale(0.3);
-            opacity: 0;
-            transition: transform 0.8s ease-in, opacity 0.6s;
-        }
-        .envelope-flap {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #fdf0dc;
-            clip-path: polygon(0% 0%, 50% 55%, 100% 0%);
-            border-bottom: 1px solid #d3c7b2;
-        }
-        .envelope-body {
-            padding-top: 30px;
+        .envelope-preview {
+            background: #fefaf5;
+            border-radius: 20px;
+            padding: 1.5rem;
             text-align: center;
-            font-size: 0.9rem;
-            color: #4a3920;
+            border: 1px dashed #ddd6cc;
         }
-        .stamp {
-            position: absolute;
-            top: 10px;
-            right: 12px;
-            width: 38px;
-            height: 45px;
-            background: #e0c8a0;
-            border-radius: 4px;
-            font-size: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #7a5c3a;
-            font-weight: bold;
+        .mini-envelope {
+            background: #fff6ed;
+            width: 180px;
+            height: 110px;
+            margin: 0 auto 1rem;
+            border-radius: 10px;
+            position: relative;
+            border: 1px solid #e2cfb5;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
-        .envelope-address {
-            margin-top: 15px;
-            font-size: 12px;
-            background: #f5e9d9;
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 30px;
+        .mini-flap {
+            background: #f2e4d4;
+            width: 100%;
+            height: 50%;
+            clip-path: polygon(0% 0%, 50% 55%, 100% 0%);
+        }
+        .preview-name {
+            font-size: 0.8rem;
             font-weight: 500;
+            margin-top: 8px;
+            color: #4a3a28;
         }
-        /* список конвертов (отправленные) */
-        .messages-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        .envelope-card {
-            background: #fffaf2;
-            border-radius: 24px;
-            padding: 1rem 1.4rem;
-            border-left: 10px solid #2b5e3b;
+
+        .envelope-list-item {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 1rem 1.2rem;
+            border: 1px solid #efedea;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            cursor: default;
-            transition: 0.2s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            margin-bottom: 0.75rem;
+            transition: 0.15s;
         }
-        .envelope-card .info {
+        .envelope-list-item:hover {
+            background: #fefcf8;
+        }
+        .envelope-icon {
+            font-size: 1.5rem;
+            margin-right: 0.75rem;
+        }
+        .info-line {
             font-weight: 500;
+            color: #2c3e5c;
         }
-        .envelope-card .date {
-            font-size: 0.85rem;
-            color: #6b5a44;
+        .meta-line {
+            font-size: 0.8rem;
+            color: #9ca0a8;
         }
-        .badge {
-            background: #e7dfd3;
-            padding: 4px 12px;
-            border-radius: 50px;
-            font-size: 0.75rem;
-        }
-        .toast {
+
+        .envelope-animation-area {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: #2c2b28e0;
-            backdrop-filter: blur(8px);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            z-index: 1100;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+            pointer-events: none;
         }
-        @media (max-width: 700px) {
-            .grid-2 { grid-template-columns: 1fr; }
-            .envelope-card { flex-direction: column; align-items: start; gap: 0.5rem; }
+        .fly-envelope {
+            background: #fef3e6;
+            width: 200px;
+            height: 125px;
+            border-radius: 12px;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+            border: 1px solid #e6d5c0;
+            position: relative;
+            opacity: 0;
+            transform: scale(0.5) translate(40px, 40px);
+            transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.4s;
         }
+        .fly-envelope.show {
+            opacity: 1;
+            transform: scale(1) translate(0,0);
+        }
+        .fly-envelope.flyaway {
+            transform: translateX(160px) translateY(-90px) scale(0.2);
+            opacity: 0;
+            transition: transform 0.7s ease-in, opacity 0.5s;
+        }
+        .flap {
+            background: #f2e2cf;
+            width: 100%;
+            height: 50%;
+            clip-path: polygon(0% 0%, 50% 58%, 100% 0%);
+        }
+        .envelope-content {
+            text-align: center;
+            padding-top: 12px;
+        }
+        .envelope-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: #fff4e8;
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 30px;
+        }
+
         .user-panel {
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            gap: 15px;
+            gap: 1rem;
             margin-bottom: 2rem;
         }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #1e1e2ad9;
+            backdrop-filter: blur(8px);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            z-index: 1200;
+        }
+
         hr {
             margin: 1rem 0;
-            border-color: #e0d9cf;
+            border: none;
+            border-top: 1px solid #edebe7;
+        }
+
+        @media (max-width: 720px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .envelope-list-item { flex-direction: column; align-items: start; gap: 8px; }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <!-- Верхняя панель -->
     <div class="user-panel" id="userPanel" style="display: none;">
-        <div style="display: flex; gap: 12px; align-items: center;">
-            <span>📧 <strong id="userEmailSpan"></strong></span>
-            <button id="logoutBtn" class="btn-outline" style="width: auto; padding: 6px 18px;">Выйти</button>
-        </div>
+        <span style="font-size: 0.9rem;">📬 <span id="userEmailSpan"></span></span>
+        <button id="logoutBtn" class="btn-outline" style="width: auto; padding: 6px 18px;">Выйти</button>
     </div>
 
-    <div class="logo">✉️ Message to Future</div>
-    <div style="text-align: center; margin-bottom: 2rem;">Отправь письмо, которого нельзя открыть — только конверт с датой</div>
+    <div class="header">
+        <div class="logo"><span>✉️</span> Message to Future</div>
+        <div class="sub">конверт с датой — письмо останется не прочитанным</div>
+    </div>
 
-    <!-- авторизация -->
-    <div id="authSection" class="card" style="max-width: 480px; margin: 0 auto;">
-        <h2>🔐 Вход по почте</h2>
-        <p style="margin: 0.5rem 0 1rem 0;">Введите email — придёт код</p>
-        <input type="email" id="loginEmail" placeholder="example@mail.ru">
+    <div id="authSection" class="card" style="max-width: 460px; margin: 0 auto;">
+        <h3 style="font-weight: 500; margin-bottom: 1rem;">Вход по почте</h3>
+        <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="off">
         <div id="otpGroup" style="display: none;">
             <input type="text" id="otpCode" placeholder="Код из письма">
         </div>
-        <button id="sendOtpBtn">📧 Отправить код</button>
-        <button id="verifyBtn" style="display: none;">✅ Войти</button>
-        <p style="font-size: 12px; margin-top: 1rem;">Код отправляется на почту через наш сервер. (демо-режим / реальный бэкенд)</p>
+        <button id="sendOtpBtn">Отправить код</button>
+        <button id="verifyBtn" style="display: none;">Войти</button>
+        <p style="font-size: 12px; margin-top: 1rem; color:#8c8a98;">Демо-режим: код покажется в уведомлении</p>
     </div>
 
-    <!-- основной контент после входа -->
     <div id="appContent" style="display: none;">
         <div class="tabs">
-            <button class="tab active" data-tab="new">📝 Написать письмо</button>
+            <button class="tab active" data-tab="new">➕ Создать конверт</button>
             <button class="tab" data-tab="list">📬 Мои конверты</button>
         </div>
 
-        <!-- форма создания письма (конверта) -->
         <div id="newMessageTab" class="section active">
             <div class="grid-2">
                 <div class="card">
-                    <h2>📝 Создать конверт</h2>
-                    <input type="email" id="recipientEmail" placeholder="Кому отправить (email)">
-                    <input type="text" id="messageSubject" placeholder="Имя/подпись на конверте">
-                    <label>📅 Дата отправки (когда письмо улетит):</label>
+                    <h3 style="margin-bottom: 1rem; font-weight: 500;">💌 Создать послание</h3>
+                    <label>📧 Получатель</label>
+                    <input type="email" id="recipientEmail" placeholder="example@domain.com">
+                    <label>🏷️ Подпись / имя на конверте</label>
+                    <input type="text" id="envelopeName" placeholder="Например: «Себе через год», «Маме»">
+                    <label>📅 Дата отправки</label>
                     <input type="datetime-local" id="sendDate">
-                    <button id="sendFutureBtn">💌 Отправить конверт в будущее</button>
-                    <p style="font-size: 13px; margin-top: 15px;">⚠️ Письмо нельзя прочитать. На конверте будет только дата и имя.</p>
+                    <button id="sendEnvelopeBtn">Отправить конверт</button>
+                    <p style="font-size: 12px; margin-top: 1rem; color:#8c8a98;">✉️ Текст письма не нужен. Получатель увидит только конверт с датой.</p>
                 </div>
                 <div class="card">
-                    <h2>✨ Как это работает</h2>
-                    <p>✉️ Вы создаёте конверт с именем и датой отправки.</p>
-                    <p>🎬 При отправке вы увидите анимацию — конверт появится и "улетит" в сторону.</p>
-                    <p>📬 В разделе «Мои конверты» хранятся все созданные письма. Их нельзя открыть — только видна дата и имя получателя.</p>
-                    <p>🔔 Напоминания и реальная отправка писем происходят через бэкенд (SMTP Яндекс).</p>
-                    <div style="text-align:center; margin-top:1rem;">💌</div>
+                    <div class="envelope-preview">
+                        <div class="mini-envelope">
+                            <div class="mini-flap"></div>
+                        </div>
+                        <div class="preview-name" id="previewNameText">🏷️ имя на конверте</div>
+                        <div style="font-size: 0.7rem; color:#b8aa99;">дата доставки</div>
+                    </div>
+                    <hr>
+                    <h3 style="font-weight: 500; margin-bottom: 0.5rem;">📌 Главное</h3>
+                    <ul style="list-style: none; margin-top: 0.5rem;">
+                        <li>🔹 конверт нельзя открыть</li>
+                        <li>🔹 только дата + имя получателя</li>
+                        <li>🔹 анимация при отправке</li>
+                    </ul>
                 </div>
             </div>
         </div>
 
-        <!-- список конвертов (непрочитаемые) -->
         <div id="listMessagesTab" class="section">
             <div class="card">
-                <h2>📬 Отправленные конверты</h2>
+                <h3 style="margin-bottom: 1.2rem;">📬 Отправленные конверты</h3>
                 <div id="messagesList" style="max-height: 500px; overflow-y: auto;">
-                    <p style="text-align:center;">Загрузка...</p>
+                    <p style="text-align:center; color:#a8a6b3;">Загрузка...</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- зона для анимации конверта -->
-<div class="envelope-animation-area" id="envelopeZone"></div>
+<div class="envelope-animation-area" id="envelopeAnimZone"></div>
 
 <script>
-    // ============ ПОДКЛЮЧЕНИЕ К РЕАЛЬНОМУ БЭКЕНДУ ============
-    const API_URL = "http://localhost:5000"; // Замените на ваш URL после деплоя
-    
     let currentUser = null;
-    let authToken = localStorage.getItem('authToken');
     
     if (!localStorage.getItem('future_envelopes')) {
         localStorage.setItem('future_envelopes', JSON.stringify([]));
@@ -355,184 +368,188 @@
         t.innerText = msg;
         t.style.borderLeftColor = isError ? '#e74c3c' : '#2c3e5c';
         document.body.appendChild(t);
-        setTimeout(() => t.remove(), 3500);
+        setTimeout(() => t.remove(), 3200);
     }
     
-    async function apiCall(endpoint, data) {
-        try {
-            const response = await fetch(`${API_URL}${endpoint}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.error || 'Ошибка');
-            return result;
-        } catch (err) {
-            showToast(err.message, true);
-            throw err;
-        }
-    }
-    
-    // ========== ОТПРАВКА КОДА НА РЕАЛЬНУЮ ПОЧТУ ==========
-    let pendingLogin = null;
-    
-    document.getElementById('sendOtpBtn')?.addEventListener('click', async () => {
-        const email = document.getElementById('loginEmail').value.trim();
-        if (!email || !email.includes('@')) {
-            showToast('Введите корректный email', true);
-            return;
-        }
-        pendingLogin = email;
-        
-        const btn = document.getElementById('sendOtpBtn');
-        btn.disabled = true;
-        btn.textContent = '⏳ Отправка...';
-        
-        try {
-            await apiCall('/send-otp', { email });
-            showToast('Код отправлен на почту!');
-            document.getElementById('otpGroup').style.display = 'block';
-            btn.style.display = 'none';
-            document.getElementById('verifyBtn').style.display = 'block';
-        } catch (err) {
-            console.error(err);
-        } finally {
-            btn.disabled = false;
-            btn.textContent = 'Отправить код';
-        }
-    });
-    
-    document.getElementById('verifyBtn')?.addEventListener('click', async () => {
-        const code = document.getElementById('otpCode').value.trim();
-        if (!code) {
-            showToast('Введите код', true);
-            return;
-        }
-        
-        const btn = document.getElementById('verifyBtn');
-        btn.disabled = true;
-        btn.textContent = '⏳ Проверка...';
-        
-        try {
-            const res = await apiCall('/verify-otp', { email: pendingLogin, code });
-            currentUser = { email: pendingLogin };
-            authToken = res.token;
-            localStorage.setItem('authToken', authToken);
-            
-            showToast(`Добро пожаловать, ${pendingLogin}!`);
-            
-            document.getElementById('authSection').style.display = 'none';
-            document.getElementById('appContent').style.display = 'block';
-            document.getElementById('userPanel').style.display = 'flex';
-            document.getElementById('userEmailSpan').innerText = currentUser.email;
-            
-            renderEnvelopes();
-            
-            // очистка
-            document.getElementById('loginEmail').value = '';
-            document.getElementById('otpCode').value = '';
-            document.getElementById('otpGroup').style.display = 'none';
-            document.getElementById('sendOtpBtn').style.display = 'block';
-            document.getElementById('verifyBtn').style.display = 'none';
-        } catch (err) {
-            console.error(err);
-        } finally {
-            btn.disabled = false;
-            btn.textContent = 'Войти';
-        }
-    });
-    
-    // ========== СОХРАНЕНИЕ КОНВЕРТА ЧЕРЕЗ БЭКЕНД ==========
-    async function saveEnvelope(recipient, name, sendDate) {
-        await apiCall('/save-envelope', {
-            userEmail: currentUser.email,
-            recipientEmail: recipient,
-            name: name,
-            sendDate: sendDate
+    function escapeHtml(str) {
+        if(!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
         });
     }
     
-    async function loadEnvelopesFromServer() {
-        const res = await apiCall('/get-envelopes', { userEmail: currentUser.email });
-        return res.envelopes;
+    const nameInput = document.getElementById('envelopeName');
+    const previewSpan = document.getElementById('previewNameText');
+    if(nameInput && previewSpan) {
+        nameInput.addEventListener('input', () => {
+            previewSpan.innerText = nameInput.value.trim() || '🏷️ имя на конверте';
+        });
     }
     
-    async function renderEnvelopes() {
-        if (!currentUser) return;
-        try {
-            const envelopes = await loadEnvelopesFromServer();
-            const container = document.getElementById('messagesList');
-            if (envelopes.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:#a8a6b3;">📭 Ещё нет ни одного конверта</p>';
-                return;
-            }
-            container.innerHTML = envelopes.map(env => `
-                <div class="envelope-list-item">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <span class="envelope-icon">✉️</span>
-                        <div>
-                            <div class="info-line">${escapeHtml(env.name)}</div>
-                            <div class="meta-line">кому: ${escapeHtml(env.recipient)}</div>
-                        </div>
-                    </div>
-                    <div class="meta-line">📅 ${new Date(env.sendDate).toLocaleString()}</div>
-                </div>
-            `).join('');
-        } catch (err) {
-            console.error(err);
+    function animateEnvelopeFly(nameOnEnv, dateStr) {
+        const zone = document.getElementById('envelopeAnimZone');
+        const envDiv = document.createElement('div');
+        envDiv.className = 'fly-envelope';
+        const displayDate = dateStr ? new Date(dateStr).toLocaleDateString() : 'скоро';
+        envDiv.innerHTML = `
+            <div class="flap"></div>
+            <div class="envelope-content">
+                <div class="envelope-name">📌 ${escapeHtml(nameOnEnv)}</div>
+                <div style="font-size: 10px; margin-top: 8px;">🕒 ${displayDate}</div>
+            </div>
+        `;
+        zone.appendChild(envDiv);
+        setTimeout(() => envDiv.classList.add('show'), 20);
+        setTimeout(() => {
+            envDiv.classList.add('flyaway');
+            setTimeout(() => envDiv.remove(), 800);
+        }, 1300);
+    }
+    
+    function saveEnvelope(recipientEmail, nameOnEnvelope, scheduledDate) {
+        const envelopes = JSON.parse(localStorage.getItem('future_envelopes'));
+        const newEnv = {
+            id: Date.now(),
+            userEmail: currentUser.email,
+            recipient: recipientEmail,
+            name: nameOnEnvelope,
+            sendDate: scheduledDate,
+            createdAt: new Date().toISOString()
+        };
+        envelopes.push(newEnv);
+        localStorage.setItem('future_envelopes', JSON.stringify(envelopes));
+        return newEnv;
+    }
+    
+    function renderEnvelopes() {
+        if(!currentUser) return;
+        const all = JSON.parse(localStorage.getItem('future_envelopes'));
+        const userEnvs = all.filter(e => e.userEmail === currentUser.email);
+        const container = document.getElementById('messagesList');
+        if(userEnvs.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:#a8a6b3;">📭 Ещё нет ни одного конверта</p>';
+            return;
         }
+        container.innerHTML = userEnvs.map(env => `
+            <div class="envelope-list-item">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span class="envelope-icon">✉️</span>
+                    <div>
+                        <div class="info-line">${escapeHtml(env.name)}</div>
+                        <div class="meta-line">кому: ${escapeHtml(env.recipient)}</div>
+                    </div>
+                </div>
+                <div class="meta-line">📅 ${new Date(env.sendDate).toLocaleString()}</div>
+            </div>
+        `).join('');
     }
     
-    // отправка конверта
-    document.getElementById('sendEnvelopeBtn')?.addEventListener('click', async () => {
-        if (!currentUser) { showToast('Сначала войдите', true); return; }
+    document.getElementById('sendEnvelopeBtn')?.addEventListener('click', () => {
+        if(!currentUser) { showToast('Сначала войдите', true); return; }
         const recipient = document.getElementById('recipientEmail').value.trim();
         const nameVal = document.getElementById('envelopeName').value.trim();
         const sendDate = document.getElementById('sendDate').value;
         
-        if (!recipient || !nameVal || !sendDate) {
-            showToast('Заполните все поля', true);
+        if(!recipient || !nameVal || !sendDate) {
+            showToast('Заполните все поля: получатель, имя, дата', true);
             return;
         }
-        if (!recipient.includes('@')) { showToast('Неверный email получателя', true); return; }
-        if (new Date(sendDate) <= new Date()) { showToast('Дата должна быть в будущем', true); return; }
+        if(!recipient.includes('@')) { showToast('Неверный email получателя', true); return; }
+        if(new Date(sendDate) <= new Date()) { showToast('Дата должна быть в будущем', true); return; }
         
-        const btn = document.getElementById('sendEnvelopeBtn');
-        btn.disabled = true;
-        btn.textContent = '⏳ Отправка...';
+        saveEnvelope(recipient, nameVal, sendDate);
+        animateEnvelopeFly(nameVal, sendDate);
+        showToast('💫 Конверт отправлен в будущее!');
         
-        try {
-            await saveEnvelope(recipient, nameVal, sendDate);
-            animateEnvelopeFly(nameVal, sendDate);
-            showToast('💫 Конверт отправлен в будущее!');
-            
-            // очистка
-            document.getElementById('recipientEmail').value = '';
-            document.getElementById('envelopeName').value = '';
-            document.getElementById('sendDate').value = '';
-            if (previewSpan) previewSpan.innerText = '🏷️ имя на конверте';
-            
-            if (document.querySelector('.tab.active')?.dataset.tab === 'list') renderEnvelopes();
-        } catch (err) {
-            console.error(err);
-        } finally {
-            btn.disabled = false;
-            btn.textContent = 'Отправить конверт';
-        }
+        document.getElementById('recipientEmail').value = '';
+        document.getElementById('envelopeName').value = '';
+        document.getElementById('sendDate').value = '';
+        if(previewSpan) previewSpan.innerText = '🏷️ имя на конверте';
+        
+        if(document.querySelector('.tab.active')?.dataset.tab === 'list') renderEnvelopes();
     });
     
-    // остальные функции (animateEnvelopeFly, escapeHtml, предпросмотр, табы, выход) остаются без изменений
-    // ... (скопируйте их из вашего текущего index.html)
+    // ========== ДЕМО-ВХОД (код на экране) ==========
+    let pendingLogin = null;
+    
+    document.getElementById('sendOtpBtn')?.addEventListener('click', () => {
+        const email = document.getElementById('loginEmail').value.trim();
+        if(!email || !email.includes('@')) {
+            showToast('Введите корректный email', true);
+            return;
+        }
+        pendingLogin = email;
+        const demoCode = Math.floor(100000 + Math.random() * 900000).toString();
+        alert(`🔐 Демо-режим\nВаш код для входа: ${demoCode}\nВведите его в поле ниже.`);
+        localStorage.setItem('demo_otp_code', demoCode);
+        localStorage.setItem('demo_otp_expire', Date.now() + 10*60*1000);
+        
+        document.getElementById('otpGroup').style.display = 'block';
+        document.getElementById('sendOtpBtn').style.display = 'none';
+        document.getElementById('verifyBtn').style.display = 'block';
+        showToast('Код отправлен (посмотрите в уведомлении)');
+    });
+    
+    document.getElementById('verifyBtn')?.addEventListener('click', () => {
+        const entered = document.getElementById('otpCode').value.trim();
+        const savedCode = localStorage.getItem('demo_otp_code');
+        const expire = localStorage.getItem('demo_otp_expire');
+        if(!entered || !savedCode || !expire) { 
+            showToast('Ошибка, запросите код заново', true); 
+            return; 
+        }
+        if(Date.now() > parseInt(expire)) { 
+            showToast('Код просрочен', true); 
+            return; 
+        }
+        if(entered !== savedCode) { 
+            showToast('Неверный код', true); 
+            return; 
+        }
+        
+        currentUser = { email: pendingLogin };
+        showToast(`Вход выполнен, ${pendingLogin}`);
+        
+        document.getElementById('authSection').style.display = 'none';
+        document.getElementById('appContent').style.display = 'block';
+        document.getElementById('userPanel').style.display = 'flex';
+        document.getElementById('userEmailSpan').innerText = currentUser.email;
+        renderEnvelopes();
+        
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('otpCode').value = '';
+        document.getElementById('otpGroup').style.display = 'none';
+        document.getElementById('sendOtpBtn').style.display = 'block';
+        document.getElementById('verifyBtn').style.display = 'none';
+    });
     
     document.getElementById('logoutBtn')?.addEventListener('click', () => {
         currentUser = null;
-        localStorage.removeItem('authToken');
         document.getElementById('authSection').style.display = 'block';
         document.getElementById('appContent').style.display = 'none';
         document.getElementById('userPanel').style.display = 'none';
         showToast('Вы вышли');
     });
+    
+    document.querySelectorAll('.tab').forEach(t => {
+        t.addEventListener('click', () => {
+            const name = t.dataset.tab;
+            document.querySelectorAll('.tab').forEach(tb => tb.classList.remove('active'));
+            t.classList.add('active');
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            if(name === 'new') {
+                document.getElementById('newMessageTab').classList.add('active');
+            } else {
+                document.getElementById('listMessagesTab').classList.add('active');
+                renderEnvelopes();
+            }
+        });
+    });
+    
+    document.getElementById('authSection').style.display = 'block';
 </script>
 </body>
 </html>
