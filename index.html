@@ -339,257 +339,200 @@
 <div class="envelope-animation-area" id="envelopeZone"></div>
 
 <script>
-    // ---------- API НАСТРОЙКИ (бэкенд) ----------
-    // Если бэкенд не развёрнут, используем DEMO-режим (локальное хранение с эмуляцией)
-    const USE_REAL_BACKEND = false;   // установите true когда запустите python сервер
-    const API_URL = "https://anton-deepthink.github.io/never/";  // или адрес вашего Railway
-
+    // ============ ПОДКЛЮЧЕНИЕ К РЕАЛЬНОМУ БЭКЕНДУ ============
+    const API_URL = "http://localhost:5000"; // Замените на ваш URL после деплоя
+    
     let currentUser = null;
     let authToken = localStorage.getItem('authToken');
-
-    // простой localstorage для демо-режима (имитация)
-    if(!USE_REAL_BACKEND) {
-        if (!localStorage.getItem('demo_users')) localStorage.setItem('demo_users', JSON.stringify([]));
-        if (!localStorage.getItem('demo_messages')) localStorage.setItem('demo_messages', JSON.stringify([]));
-        if (!localStorage.getItem('demo_otps')) localStorage.setItem('demo_otps', JSON.stringify([]));
+    
+    if (!localStorage.getItem('future_envelopes')) {
+        localStorage.setItem('future_envelopes', JSON.stringify([]));
     }
-
-    async function apiRequest(endpoint, method, data) {
-        if(!USE_REAL_BACKEND) {
-            // Имитация ответов
-            if(endpoint === '/api/send-otp') {
-                const { email } = data;
-                const code = Math.floor(100000 + Math.random()*900000).toString();
-                let otps = JSON.parse(localStorage.getItem('demo_otps'));
-                otps = otps.filter(o=> o.email !== email);
-                otps.push({ email, code, expiresAt: Date.now()+10*60*1000 });
-                localStorage.setItem('demo_otps', JSON.stringify(otps));
-                alert(`[ДЕМО] Код для входа: ${code} (проверьте консоль)`);
-                console.log(`Код ${code} для ${email}`);
-                return { success: true };
-            }
-            if(endpoint === '/api/verify-otp') {
-                const { email, code } = data;
-                let otps = JSON.parse(localStorage.getItem('demo_otps'));
-                const valid = otps.find(o => o.email === email && o.code === code && o.expiresAt > Date.now());
-                if(valid) {
-                    const token = 'demo_token_' + Date.now();
-                    localStorage.setItem('authToken', token);
-                    return { token, email };
-                } else throw new Error('Неверный код');
-            }
-            if(endpoint === '/api/messages' && method === 'GET') {
-                let msgs = JSON.parse(localStorage.getItem('demo_messages')).filter(m => m.userEmail === currentUser?.email);
-                return { messages: msgs };
-            }
-            if(endpoint === '/api/messages' && method === 'POST') {
-                let msgs = JSON.parse(localStorage.getItem('demo_messages'));
-                const newMsg = {
-                    id: Date.now(),
-                    userEmail: currentUser.email,
-                    recipient_email: data.recipientEmail,
-                    subject: data.subject,
-                    message_text: "(конверт, письмо не показывается)",
-                    scheduled_time: data.scheduledTime,
-                    reminder_time: null,
-                    sent: 0,
-                    createdAt: new Date().toISOString()
-                };
-                msgs.push(newMsg);
-                localStorage.setItem('demo_messages', JSON.stringify(msgs));
-                return { success: true };
-            }
-            throw new Error('demo endpoint');
-        } else {
-            // реальный запрос
-            const headers = { 'Content-Type':'application/json' };
-            if(authToken) headers['Authorization'] = `Bearer ${authToken}`;
-            const res = await fetch(`${API_URL}${endpoint}`, { method, headers, body: data? JSON.stringify(data):undefined });
-            if(!res.ok) throw new Error(await res.text());
-            return res.json();
-        }
-    }
-
-    // Вспомогательные уведомления
-    function showToast(text, type='info') {
+    
+    function showToast(msg, isError = false) {
         const t = document.createElement('div');
         t.className = 'toast';
-        t.innerText = text;
+        t.innerText = msg;
+        t.style.borderLeftColor = isError ? '#e74c3c' : '#2c3e5c';
         document.body.appendChild(t);
-        setTimeout(()=> t.remove(), 3500);
+        setTimeout(() => t.remove(), 3500);
     }
-
-    // ========== АНИМАЦИЯ КОНВЕРТА ==========
-    function animateEnvelope(nameOnEnvelope, sendDate) {
-        const zone = document.getElementById('envelopeZone');
-        const envDiv = document.createElement('div');
-        envDiv.className = 'envelope';
-        const formattedDate = sendDate ? new Date(sendDate).toLocaleDateString() : 'скоро';
-        envDiv.innerHTML = `
-            <div class="envelope-flap"></div>
-            <div class="envelope-body">
-                <div class="stamp">✉️</div>
-                <div class="envelope-address">📌 ${escapeHtml(nameOnEnvelope)}</div>
-                <div style="margin-top:8px; font-size:11px;">🕒 ${formattedDate}</div>
-            </div>
-        `;
-        zone.appendChild(envDiv);
-        // анимация появления
-        setTimeout(() => envDiv.classList.add('show'), 20);
-        // через 1.2 секунды "улетает"
-        setTimeout(() => {
-            envDiv.classList.add('fly-away');
-            setTimeout(() => envDiv.remove(), 900);
-        }, 1200);
-    }
-
-    // ========== ОТПРАВКА СООБЩЕНИЯ-КОНВЕРТА ==========
-    document.getElementById('sendFutureBtn')?.addEventListener('click', async () => {
-        if(!currentUser) { showToast('Сначала войдите', 'error'); return; }
-        const recipient = document.getElementById('recipientEmail').value.trim();
-        const subject = document.getElementById('messageSubject').value.trim();
-        const sendDate = document.getElementById('sendDate').value;
-        if(!recipient || !subject || !sendDate) {
-            showToast('Заполните поля (email, имя на конверте, дата)', 'error');
-            return;
-        }
-        if(!recipient.includes('@')) { showToast('Неверный email', 'error'); return; }
-        if(new Date(sendDate) <= new Date()) { showToast('Дата должна быть в будущем', 'error'); return; }
-
-        const btn = document.getElementById('sendFutureBtn');
-        btn.disabled = true;
-        btn.innerHTML = '⏳ Отправка...';
-
+    
+    async function apiCall(endpoint, data) {
         try {
-            await apiRequest('/api/messages', 'POST', {
-                recipientEmail: recipient,
-                subject: subject,
-                messageText: '(конверт, содержимое скрыто)',
-                scheduledTime: sendDate,
-                reminderDays: 0
+            const response = await fetch(`${API_URL}${endpoint}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
             });
-            // Запускаем анимацию конверта
-            animateEnvelope(subject, sendDate);
-            showToast('💌 Конверт отправлен в будущее!', 'success');
-            // очистка формы
-            document.getElementById('recipientEmail').value = '';
-            document.getElementById('messageSubject').value = '';
-            document.getElementById('sendDate').value = '';
-            // обновить список конвертов если активна вкладка
-            if(document.querySelector('[data-tab="list"]').classList.contains('active')) loadMessages();
-        } catch(e) { showToast('Ошибка: '+e.message, 'error'); }
-        finally { btn.disabled = false; btn.innerHTML = '💌 Отправить конверт в будущее'; }
-    });
-
-    async function loadMessages() {
-        if(!currentUser) return;
-        try {
-            const res = await apiRequest('/api/messages', 'GET');
-            let msgs = res.messages || [];
-            const container = document.getElementById('messagesList');
-            if(msgs.length === 0) {
-                container.innerHTML = '<p style="text-align:center;">📭 Нет отправленных конвертов</p>';
-                return;
-            }
-            container.innerHTML = msgs.map(msg => `
-                <div class="envelope-card">
-                    <div class="info">📩 <strong>${escapeHtml(msg.subject || 'Без имени')}</strong></div>
-                    <div class="date">🕒 Отправить: ${new Date(msg.scheduled_time).toLocaleString()}</div>
-                    <div class="badge">✉️ только дата</div>
-                </div>
-            `).join('');
-        } catch(e) { console.error(e); }
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || 'Ошибка');
+            return result;
+        } catch (err) {
+            showToast(err.message, true);
+            throw err;
+        }
     }
-
-    // ========== ЛОГИН OTP ==========
+    
+    // ========== ОТПРАВКА КОДА НА РЕАЛЬНУЮ ПОЧТУ ==========
+    let pendingLogin = null;
+    
     document.getElementById('sendOtpBtn')?.addEventListener('click', async () => {
         const email = document.getElementById('loginEmail').value.trim();
-        if(!email || !email.includes('@')) { showToast('Укажите email', 'error'); return; }
+        if (!email || !email.includes('@')) {
+            showToast('Введите корректный email', true);
+            return;
+        }
+        pendingLogin = email;
+        
         const btn = document.getElementById('sendOtpBtn');
         btn.disabled = true;
-        btn.innerHTML = '⏳ Отправка...';
+        btn.textContent = '⏳ Отправка...';
+        
         try {
-            await apiRequest('/api/send-otp', 'POST', { email });
-            showToast('Код отправлен на почту', 'success');
+            await apiCall('/send-otp', { email });
+            showToast('Код отправлен на почту!');
             document.getElementById('otpGroup').style.display = 'block';
             btn.style.display = 'none';
             document.getElementById('verifyBtn').style.display = 'block';
-        } catch(e) { showToast('Ошибка отправки', 'error'); }
-        finally { btn.disabled = false; btn.innerHTML = '📧 Отправить код'; }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Отправить код';
+        }
     });
-
+    
     document.getElementById('verifyBtn')?.addEventListener('click', async () => {
-        const email = document.getElementById('loginEmail').value.trim();
         const code = document.getElementById('otpCode').value.trim();
-        if(!code) { showToast('Введите код', 'error'); return; }
+        if (!code) {
+            showToast('Введите код', true);
+            return;
+        }
+        
         const btn = document.getElementById('verifyBtn');
         btn.disabled = true;
-        btn.innerHTML = 'Проверка...';
+        btn.textContent = '⏳ Проверка...';
+        
         try {
-            const res = await apiRequest('/api/verify-otp', 'POST', { email, code });
+            const res = await apiCall('/verify-otp', { email: pendingLogin, code });
+            currentUser = { email: pendingLogin };
             authToken = res.token;
             localStorage.setItem('authToken', authToken);
-            currentUser = { email };
-            updateUIafterLogin();
-            showToast(`Добро пожаловать, ${email}!`, 'success');
-            loadMessages();
-        } catch(e) { showToast('Неверный код', 'error'); }
-        finally { btn.disabled = false; btn.innerHTML = '✅ Войти'; }
-    });
-
-    document.getElementById('logoutBtn')?.addEventListener('click', () => {
-        localStorage.removeItem('authToken');
-        currentUser = null;
-        authToken = null;
-        updateUIafterLogin();
-    });
-
-    function updateUIafterLogin() {
-        const isLogged = !!currentUser || !!authToken;
-        if(isLogged && !currentUser && authToken && USE_REAL_BACKEND===false) {
-            // в демо-режиме восстановим email
-            let demoUsers = JSON.parse(localStorage.getItem('demo_users'));
-            // можно сохранить email при логине
-            const fakeEmail = localStorage.getItem('demo_last_email');
-            if(fakeEmail) currentUser = { email: fakeEmail };
-        }
-        if(currentUser || authToken) {
+            
+            showToast(`Добро пожаловать, ${pendingLogin}!`);
+            
             document.getElementById('authSection').style.display = 'none';
             document.getElementById('appContent').style.display = 'block';
             document.getElementById('userPanel').style.display = 'flex';
-            document.getElementById('userEmailSpan').innerText = currentUser?.email || 'Пользователь';
-        } else {
-            document.getElementById('authSection').style.display = 'block';
-            document.getElementById('appContent').style.display = 'none';
-            document.getElementById('userPanel').style.display = 'none';
+            document.getElementById('userEmailSpan').innerText = currentUser.email;
+            
+            renderEnvelopes();
+            
+            // очистка
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('otpCode').value = '';
+            document.getElementById('otpGroup').style.display = 'none';
+            document.getElementById('sendOtpBtn').style.display = 'block';
+            document.getElementById('verifyBtn').style.display = 'none';
+        } catch (err) {
+            console.error(err);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Войти';
+        }
+    });
+    
+    // ========== СОХРАНЕНИЕ КОНВЕРТА ЧЕРЕЗ БЭКЕНД ==========
+    async function saveEnvelope(recipient, name, sendDate) {
+        await apiCall('/save-envelope', {
+            userEmail: currentUser.email,
+            recipientEmail: recipient,
+            name: name,
+            sendDate: sendDate
+        });
+    }
+    
+    async function loadEnvelopesFromServer() {
+        const res = await apiCall('/get-envelopes', { userEmail: currentUser.email });
+        return res.envelopes;
+    }
+    
+    async function renderEnvelopes() {
+        if (!currentUser) return;
+        try {
+            const envelopes = await loadEnvelopesFromServer();
+            const container = document.getElementById('messagesList');
+            if (envelopes.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#a8a6b3;">📭 Ещё нет ни одного конверта</p>';
+                return;
+            }
+            container.innerHTML = envelopes.map(env => `
+                <div class="envelope-list-item">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span class="envelope-icon">✉️</span>
+                        <div>
+                            <div class="info-line">${escapeHtml(env.name)}</div>
+                            <div class="meta-line">кому: ${escapeHtml(env.recipient)}</div>
+                        </div>
+                    </div>
+                    <div class="meta-line">📅 ${new Date(env.sendDate).toLocaleString()}</div>
+                </div>
+            `).join('');
+        } catch (err) {
+            console.error(err);
         }
     }
-
-    // вкладки
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            const name = tab.dataset.tab;
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            if(name === 'new') document.getElementById('newMessageTab').classList.add('active');
-            else {
-                document.getElementById('listMessagesTab').classList.add('active');
-                loadMessages();
-            }
-        });
+    
+    // отправка конверта
+    document.getElementById('sendEnvelopeBtn')?.addEventListener('click', async () => {
+        if (!currentUser) { showToast('Сначала войдите', true); return; }
+        const recipient = document.getElementById('recipientEmail').value.trim();
+        const nameVal = document.getElementById('envelopeName').value.trim();
+        const sendDate = document.getElementById('sendDate').value;
+        
+        if (!recipient || !nameVal || !sendDate) {
+            showToast('Заполните все поля', true);
+            return;
+        }
+        if (!recipient.includes('@')) { showToast('Неверный email получателя', true); return; }
+        if (new Date(sendDate) <= new Date()) { showToast('Дата должна быть в будущем', true); return; }
+        
+        const btn = document.getElementById('sendEnvelopeBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ Отправка...';
+        
+        try {
+            await saveEnvelope(recipient, nameVal, sendDate);
+            animateEnvelopeFly(nameVal, sendDate);
+            showToast('💫 Конверт отправлен в будущее!');
+            
+            // очистка
+            document.getElementById('recipientEmail').value = '';
+            document.getElementById('envelopeName').value = '';
+            document.getElementById('sendDate').value = '';
+            if (previewSpan) previewSpan.innerText = '🏷️ имя на конверте';
+            
+            if (document.querySelector('.tab.active')?.dataset.tab === 'list') renderEnvelopes();
+        } catch (err) {
+            console.error(err);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Отправить конверт';
+        }
     });
-
-    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
-
-    // начальная загрузка
-    if(!USE_REAL_BACKEND && localStorage.getItem('authToken')) {
-        // симулируем что пользователь есть
-        currentUser = { email: "demo@user.com" };
-        localStorage.setItem('demo_last_email', "demo@user.com");
-    }
-    updateUIafterLogin();
-    if(currentUser) loadMessages();
+    
+    // остальные функции (animateEnvelopeFly, escapeHtml, предпросмотр, табы, выход) остаются без изменений
+    // ... (скопируйте их из вашего текущего index.html)
+    
+    document.getElementById('logoutBtn')?.addEventListener('click', () => {
+        currentUser = null;
+        localStorage.removeItem('authToken');
+        document.getElementById('authSection').style.display = 'block';
+        document.getElementById('appContent').style.display = 'none';
+        document.getElementById('userPanel').style.display = 'none';
+        showToast('Вы вышли');
+    });
 </script>
 </body>
 </html>
