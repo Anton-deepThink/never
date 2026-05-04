@@ -1,23 +1,15 @@
-name: Deploy Backend to Render
+name: Run Backend
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - 'server.py'
-      - 'requirements.txt'
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  backend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
-      - name: Deploy to Render
-        env:
-          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
-          SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
-        run: |
-          curl -X POST "https://api.render.com/v1/services/$SERVICE_ID/deploys" \
-            -H "Authorization: Bearer $RENDER_API_KEY" \
-            -H "Content-Type: application/json"
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - run: pip install -r requirements.txt
+      - run: python server.py
